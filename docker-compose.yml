@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  # SERVICE A: Edge Server (Frontend Next.js)
+  # Port: 3005 (Host) -> 3000 (Container)
+  edge-server:
+    build: ./demo-edge-offline-node
+    container_name: pkm-edge
+    restart: always
+    ports:
+      - "3005:3000"
+    environment:
+      # URL ini mengarah ke internal container name (mock-cloud), port 8080
+      - CLOUD_API_URL=http://mock-cloud:8080/fhir/Bundle
+    depends_on:
+      - mock-cloud
+
+  # SERVICE B: Mock Cloud (Backend API)
+  # Port: 5005 (Host) -> 8080 (Container)
+  mock-cloud:
+    build: ./demo-satusehat-mock-gateway
+    container_name: pkm-cloud
+    restart: always
+    ports:
+      - "5005:8080"
